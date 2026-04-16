@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -73,7 +74,29 @@
                 <a href="#simemp" class="nav-tab active" data-route="SIMEMP">Consórcio SIMEMP</a>
                 <a href="#neoconstec" class="nav-tab" data-route="NEOCONSTEC">Consórcio NEOCONSTEC</a>
                 <a href="#prodec" class="nav-tab" data-route="PRODEC">Consórcio PRODEC</a>
-                <!--<a href="#ranking" class="nav-tab" data-route="ranking">Ranking</a>-->
+                <select id="contrato-select" class="bg-gray-50 border border-gray-200 text-sm rounded-lg p-2 outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
+                    <option value="">Selecionar Contrato</option>
+                    <option value="CC-411">CC-411</option>
+                    <option value="CC-413">CC-413</option>
+                    <option value="CC-415">CC-415</option>
+                    <option value="CC-416">CC-416</option>
+                    <option value="CC-2116">CC-2116</option>
+                    <option value="CC-2130">CC-2130</option>
+                    <option value="CC-2132">CC-2132</option>
+                    <option value="CC-2133">CC-2133</option>
+                    <option value="CC-2134">CC-2134</option>
+                    <option value="CC-2136">CC-2136</option>
+                    <option value="CC-2137">CC-2137</option>
+                    <option value="CC-2139">CC-2139</option>
+                    <option value="CC-3115">CC-3115</option>
+                    <option value="CC-3122">CC-3122</option>
+                    <option value="CC-3132">CC-3132</option>
+                    <option value="CC-3135">CC-3135</option>
+                    <option value="CC-3136">CC-3136</option>
+                    <option value="CC-3138">CC-3138</option>
+                    <option value="CC-3139">CC-3139</option>
+                    <option value="CC-3140">CC-3140</option>
+                </select>
             </nav>
         </div>
         <div class="flex items-center gap-4">
@@ -732,3 +755,761 @@
     </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PGC - Painel de Gestão de Contratos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .nav-tab { @apply px-4 py-2 text-gray-700 font-medium text-sm hover:text-[#003366] transition-colors duration-200; border-bottom: 3px solid transparent; display: inline-flex; align-items: center; height: 100%; }
+        .nav-tab.active { @apply text-[#003366] font-bold; border-bottom-color: #003366; }
+        .transition-card {
+            position: relative;
+            overflow: hidden;
+            transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms ease, border-color 260ms ease;
+            will-change: transform;
+        }
+        .transition-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -130%;
+            width: 70%;
+            height: 100%;
+            background: linear-gradient(110deg, transparent 0%, rgba(255,255,255,0.45) 45%, transparent 100%);
+            transform: skewX(-18deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+        .transition-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 14px 28px rgba(0, 51, 102, 0.16), 0 6px 12px rgba(0, 0, 0, 0.08);
+        }
+        .transition-card:hover::after {
+            left: 140%;
+            opacity: 1;
+            transition: left 680ms ease, opacity 180ms ease;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .transition-card,
+            .transition-card::after {
+                transition: none;
+            }
+            .transition-card:hover {
+                transform: none;
+            }
+        }
+        .gauge-container { @apply relative h-[200px] w-full flex items-center justify-center; }
+        .gauge-value { @apply text-2xl font-bold text-slate-800 mt-4; }
+        html, body { height: 100%; }
+        main { min-height: calc(100vh - 64px - 200px); }
+        .footer {
+            background-color: #0f0f0f;
+            color: #ffffff;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        section[data-page] { display: none; }
+        section[data-page].active { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .loading { @apply text-center py-8 text-gray-600; }
+        .error { @apply text-center py-8 text-red-600 font-semibold; }
+        .sync-status { @apply text-xs text-gray-500 ml-2; }
+        @media (max-width: 768px) { .nav-tab { @apply px-2 py-1 text-xs; } }
+    </style>
+</head>
+<body class="bg-[#F8F9FA] text-gray-800">
+    <header class="fixed top-0 w-full bg-white border-b border-gray-200 z-50 h-16 flex items-center px-6 justify-between">
+        <div class="flex items-center gap-8">
+            <h1 class="text-xl font-bold text-[#003366] tracking-tight uppercase">PGC <span class="font-light text-gray-400">| Gestão de Contratos</span></h1>
+            <nav class="hidden md:flex gap-6 h-16 items-center" id="main-nav">
+                <a href="#simemp" class="nav-tab active" data-route="SIMEMP">Consórcio SIMEMP</a>
+                <a href="#neoconstec" class="nav-tab" data-route="NEOCONSTEC">Consórcio NEOCONSTEC</a>
+                <a href="#prodec" class="nav-tab" data-route="PRODEC">Consórcio PRODEC</a>
+                <select id="contrato-select" class="bg-gray-50 border border-gray-200 text-sm rounded-lg p-2 outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
+                    <option value="">Selecionar Contrato</option>
+                    <option value="CC-411">CC-411</option>
+                    <option value="CC-413">CC-413</option>
+                    <option value="CC-415">CC-415</option>
+                    <option value="CC-416">CC-416</option>
+                    <option value="CC-2116">CC-2116</option>
+                    <option value="CC-2130">CC-2130</option>
+                    <option value="CC-2132">CC-2132</option>
+                    <option value="CC-2133">CC-2133</option>
+                    <option value="CC-2134">CC-2134</option>
+                    <option value="CC-2136">CC-2136</option>
+                    <option value="CC-2137">CC-2137</option>
+                    <option value="CC-2139">CC-2139</option>
+                    <option value="CC-3115">CC-3115</option>
+                    <option value="CC-3122">CC-3122</option>
+                    <option value="CC-3132">CC-3132</option>
+                    <option value="CC-3135">CC-3135</option>
+                    <option value="CC-3136">CC-3136</option>
+                    <option value="CC-3138">CC-3138</option>
+                    <option value="CC-3139">CC-3139</option>
+                    <option value="CC-3140">CC-3140</option>
+                </select>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="relative">
+                <!--<label class="text-[10px] uppercase font-bold text-gray-400 absolute -top-2 left-2 bg-white px-1">Selecione o Mês</label>-->
+                <select id="month-select" class="bg-gray-50 border border-gray-200 text-sm rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-blue-500 font-semibold">
+                    <option value="">Carregando...</option>
+                </select>
+            </div>
+            <span class="sync-status" id="sync-status">⏳ Sincronizando...</span>
+        </div>
+    </header>
+
+    <main id="app" class="pt-16">
+        <template id="consorcio-template">
+            <section data-page="CONSORCIO_PLACEHOLDER">
+                <section class="bg-[#FFD700] p-6 shadow-sm">
+                    <div class="max-w-[1600px] mx-auto space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                            <div class="bg-white/90 p-4 rounded-xl shadow-sm transition-card">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase">Carteira</p>
+                                <p class="kpi-carteira text-xl font-bold text-[#003366]">R$ 0,00</p>
+                            </div>
+                            <div class="bg-white/90 p-4 rounded-xl shadow-sm transition-card">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase">Proposta Venda</p>
+                                <p class="kpi-proposta-venda text-xl font-bold text-[#003366]">R$ 0,00</p>
+                            </div>
+                            <div class="bg-white/90 p-4 rounded-xl shadow-sm transition-card">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase">Meta Custo-Resultado</p>
+                                <p class="kpi-meta-custo text-xl font-bold text-[#003366]">R$ 0,00</p>
+                            </div>
+                            <div class="bg-white/90 p-4 rounded-xl shadow-sm transition-card">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase">Produção Real</p>
+                                <p class="kpi-producao text-xl font-bold text-[#003366]">R$ 0,00</p>
+                            </div>
+                            <div class="bg-white/90 p-4 rounded-xl shadow-sm transition-card">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase">Faturamento</p>
+                                <p class="kpi-faturamento text-xl font-bold text-[#003366]">R$ 0,00</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                            <div class="bg-white/90 p-4 rounded-xl shadow-sm transition-card">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase">Saldo Carteira</p>
+                                <p class="kpi-saldo text-xl font-bold text-[#003366]">R$ 0,00</p>
+                            </div>
+                            <div class="bg-white/90 p-4 rounded-xl shadow-sm transition-card">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase">Recebimento</p>
+                                <p class="kpi-recebimento text-xl font-bold text-[#003366]">R$ 0,00</p>
+                            </div>
+                            <div class="bg-white/90 p-4 rounded-xl shadow-sm transition-card">
+                                <p class="text-[10px] font-bold text-gray-500 uppercase">Resultado Econômico</p>
+                                <p class="kpi-resultado text-xl font-bold text-gray-700">R$ 0,00</p>
+                            </div>
+                            <div class="bg-[#D32F2F] p-4 rounded-xl shadow-sm transition-card text-white">
+                                <p class="text-[10px] font-bold uppercase opacity-80">Custo Acumulado</p>
+                                <p class="kpi-custo-acum text-xl font-bold">R$ 0,00</p>
+                            </div>
+                            <div class="bg-[#1B9E5A] p-4 rounded-xl shadow-sm transition-card text-white">
+                                <p class="text-[10px] font-bold uppercase opacity-80">Retorno Econômico</p>
+                                <p class="kpi-retorno-econ text-xl font-bold">0,0%</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="max-w-[1600px] mx-auto p-6 grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="bg-white p-10 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center min-h-[180px]">
+                            <div class="unidade-logo text-3xl font-black text-[#003366] border-[4px] border-[#003366] px-6 py-2">SIMEMP</div>
+                            <p class="text-[10px] uppercase tracking-widest mt-4 text-gray-400 font-bold">Unidade de Negócio</p>
+                        </div>
+                        <div class="bg-[#121826] p-6 rounded-2xl text-white shadow-xl">
+                            <p class="text-[10px] font-medium text-gray-400 uppercase mb-1">Meta de Retorno Global</p>
+                            <p class="meta-valor text-4xl font-bold text-[#4ADE80]">0,0%</p>
+                            <div class="mt-4 h-1 w-full bg-gray-700 rounded-full overflow-hidden">
+                                <div class="meta-progress-bar h-full bg-[#4ADE80] transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:col-span-3 bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+                            <div class="text-center">
+                                <h4 class="text-[11px] font-bold text-gray-400 uppercase mb-6 tracking-wider">Produção / Custo (P/C)</h4>
+                                <div class="gauge-container"><svg class="gauge-pc w-full" style="max-width: 220px;"></svg></div>
+                                <div class="val-pc gauge-value text-3xl">0.0</div>
+                            </div>
+                            <div class="text-center">
+                                <h4 class="text-[11px] font-bold text-gray-400 uppercase mb-6 tracking-wider">Faturamento / Custo (F/C)</h4>
+                                <div class="gauge-container"><svg class="gauge-fc w-full" style="max-width: 220px;"></svg></div>
+                                <div class="val-fc gauge-value text-3xl">0.0</div>
+                            </div>
+                            <div class="text-center">
+                                <h4 class="text-[11px] font-bold text-gray-400 uppercase mb-6 tracking-wider">Recebimento / Custo (R/C)</h4>
+                                <div class="gauge-container"><svg class="gauge-rc w-full" style="max-width: 220px;"></svg></div>
+                                <div class="val-rc gauge-value text-3xl">0.0</div>
+                            </div>
+                            
+                        </div>
+                             <div class="mt-6 text-center max-w-[1600px] mx-auto px-6">
+                             <h2 class="text-[11px] font-bold text-[#003366] uppercase tracking-[0.3em]">
+                                Indicadores de Desempenho Operacional Acumulados</h2>
+                        </div>
+                    </div>
+                    
+                </section>
+
+                
+            </section>
+        </template>
+
+        <!--<section data-page="ranking">
+            <div class="max-w-[1600px] mx-auto p-6">
+                <h1 class="text-3xl font-bold text-[#003366] mb-6">Ranking de Consórcios</h1>
+                <div class="bg-white p-8 rounded-2xl shadow-sm"><p class="text-gray-600">Página de Ranking em desenvolvimento...</p></div>
+            </div>
+        </section>-->
+    </main>
+
+    <footer class="footer">
+        <div class="max-w-[1600px] mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div>
+                <p class="text-sm font-semibold text-white mb-1">SIMEMP</p>
+                <p class="text-xs">© 2026 SIMEMP. Todos os direitos reservados.</p>
+                <p class="text-xs mt-2">Desenvolvido por Wesley Roberto</p>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-white mb-3">Sobre Nós</p>
+                <ul class="space-y-2 text-xs">
+                    <li><a href="#" class="hover:text-white transition">Serviços</a></li>
+                    <li><a href="#" class="hover:text-white transition">Contato</a></li>
+                </ul>
+            </div>
+            <div>
+                <p class="text-sm font-semibold text-white mb-3">Contato</p>
+                <p class="text-xs">Contato: contato@simemp.com</p>
+                <p class="text-xs mt-1">Telefone: (61) 1234-5678</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const GOOGLE_SHEETS_SOURCES = {
+            SIMEMP: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRWSPM84j_FUhOAx_P0YYGceVjNLIKtTm8H3gLV2dKdoHbVorvAaM2xXoT7w69efDgHH_CowkybhJ_x/pub?output=csv',
+            NEOCONSTEC: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRWSPM84j_FUhOAx_P0YYGceVjNLIKtTm8H3gLV2dKdoHbVorvAaM2xXoT7w69efDgHH_CowkybhJ_x/pub?gid=2074370659&single=true&output=csv',
+            PRODEC: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRWSPM84j_FUhOAx_P0YYGceVjNLIKtTm8H3gLV2dKdoHbVorvAaM2xXoT7w69efDgHH_CowkybhJ_x/pub?gid=1380751025&single=true&output=csv'
+        };
+
+        const DashboardCharts = {
+            parseDisplayValue: function(text) {
+                if (!text) return 0;
+                const normalized = String(text).trim().replace(',', '.');
+                const parsed = parseFloat(normalized);
+                return isNaN(parsed) ? 0 : parsed;
+            },
+
+            formatDisplayValueWithoutRounding: function(value, decimals = 2) {
+                if (typeof value !== 'number' || isNaN(value)) return (0).toFixed(decimals);
+                const factor = Math.pow(10, decimals);
+                const truncated = Math.trunc(value * factor) / factor;
+                return truncated.toFixed(decimals);
+            },
+
+            valueToAngle: function(value) {
+                const clamped = Math.max(0, Math.min(value, 3));
+                return 180 - (clamped / 3) * 180;
+            },
+
+            pointOnGauge: function(value, radius = 70) {
+                const angle = this.valueToAngle(value) * (Math.PI / 180);
+                return {
+                    x: 100 + radius * Math.cos(angle),
+                    y: 100 - radius * Math.sin(angle)
+                };
+            },
+
+            describeArc: function(startValue, endValue, radius = 70) {
+                const start = this.pointOnGauge(startValue, radius);
+                const end = this.pointOnGauge(endValue, radius);
+                return `M ${start.x} ${start.y} A ${radius} ${radius} 0 0 1 ${end.x} ${end.y}`;
+            },
+
+            appendGaugeArc: function(svgElement, startValue, endValue, color, strokeWidth = 8) {
+                const arc = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                arc.setAttribute('d', this.describeArc(startValue, endValue));
+                arc.setAttribute('fill', 'none');
+                arc.setAttribute('stroke', color);
+                arc.setAttribute('stroke-width', String(strokeWidth));
+                arc.setAttribute('stroke-linecap', 'round');
+                svgElement.appendChild(arc);
+            },
+
+            createGauge: function(svgElement, value) {
+                if (!svgElement) return;
+                svgElement.innerHTML = '';
+                let numValue = 0;
+                if (typeof value === 'number' && !isNaN(value)) {
+                    numValue = Math.max(0, Math.min(value, 3));
+                }
+                svgElement.setAttribute('viewBox', '0 0 200 120');
+                svgElement.setAttribute('width', '100%');
+                svgElement.setAttribute('height', '100%');
+                svgElement.style.maxWidth = '200px';
+                svgElement.style.margin = '0 auto';
+                svgElement.style.display = 'block';
+                this.appendGaugeArc(svgElement, 0, 3, '#e5e7eb');
+                this.appendGaugeArc(svgElement, 0, 1, '#EF4444');
+                this.appendGaugeArc(svgElement, 1, 1.2, '#F59E0B');
+                this.appendGaugeArc(svgElement, 1.2, 3, '#10B981');
+
+                const radians = this.valueToAngle(numValue) * (Math.PI / 180);
+                const needleLength = 50;
+                const endX = 100 + needleLength * Math.cos(radians);
+                const endY = 100 - needleLength * Math.sin(radians);
+                const needle = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                needle.setAttribute('x1', '100');
+                needle.setAttribute('y1', '100');
+                needle.setAttribute('x2', endX);
+                needle.setAttribute('y2', endY);
+                needle.setAttribute('stroke', '#1e293b');
+                needle.setAttribute('stroke-width', '3');
+                needle.setAttribute('stroke-linecap', 'round');
+                svgElement.appendChild(needle);
+                const center = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                center.setAttribute('cx', '100');
+                center.setAttribute('cy', '100');
+                center.setAttribute('r', '5');
+                center.setAttribute('fill', '#1e293b');
+                svgElement.appendChild(center);
+            },
+
+            syncGaugeWithDisplayValue: function(svgElement, valueElement) {
+                if (!svgElement || !valueElement) return;
+                const value = this.parseDisplayValue(valueElement.innerText);
+                this.createGauge(svgElement, value);
+            }
+        };
+
+        const Formatter = {
+            converterParaNumero(valor) {
+                if (!valor || valor === '') return 0;
+                let str = String(valor).trim();
+                str = str.replace(/%/g, '');
+                str = str.replace(/\s/g, '');
+                str = str.replace(/\./g, '');
+                str = str.replace(',', '.');
+                return parseFloat(str) || 0;
+            },
+            converterParaPercentual(valor) {
+                if (!valor || valor === '') return 0;
+                const str = String(valor).trim();
+                const num = this.converterParaNumero(str);
+                if (str.includes('%')) return num;
+                if (Math.abs(num) <= 1) return num * 100;
+                return num;
+            },
+            formatarMoeda(valor) {
+                const num = this.converterParaNumero(valor);
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(num);
+            },
+            formatarPercentual(valor) {
+                const num = this.converterParaPercentual(valor);
+                return num.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + '%';
+            }
+        };
+
+        const Dashboard = {
+            consorcios: ['SIMEMP', 'NEOCONSTEC', 'PRODEC'],
+            colunasKpi: {
+                propostaVenda: 2,
+                metaCustoResultado: 3,
+                producaoReal: 4,
+                faturamento: 5,
+                recebimento: 6,
+                custoAcumulado: 7,
+                pc: 8,
+                fc: 9,
+                rc: 10,
+                resultadoEconomico: 11,
+                retornoEconomico: 12,
+                saldoCarteira: 13,
+                carteira: 14,
+                metaRetorno: 15
+            },
+            dadosPorConsorcio: {
+                SIMEMP: [],
+                NEOCONSTEC: [],
+                PRODEC: []
+            },
+            ultimaCarga: [],
+            meses: {'Janeiro': '01', 'Fevereiro': '02', 'Março': '03', 'Abril': '04', 'Maio': '05', 'Junho': '06', 'Julho': '07', 'Agosto': '08', 'Setembro': '09', 'Outubro': '10', 'Novembro': '11', 'Dezembro': '12'},
+            mesesAbreviados: { jan: 1, fev: 2, mar: 3, abr: 4, mai: 5, jun: 6, jul: 7, ago: 8, set: 9, out: 10, nov: 11, dez: 12 },
+
+            async init() {
+                console.log('🚀 Inicializando Dashboard...');
+                await this.carregarDados();
+                this.criarSecoes();
+                this.inicializarMeses();
+                this.inicializarEventos();
+                this.atualizarDashboard();
+                this.atualizarStatus();
+            },
+
+            async carregarDados() {
+                const resultados = await Promise.all(this.consorcios.map(async (consorcio) => {
+                    const url = GOOGLE_SHEETS_SOURCES[consorcio];
+                    if (!url) {
+                        this.dadosPorConsorcio[consorcio] = [];
+                        return { consorcio, status: 'missing', total: 0 };
+                    }
+
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        const csv = await response.text();
+                        const dados = this.parseCSV(csv);
+                        this.dadosPorConsorcio[consorcio] = dados;
+                        console.log(`✅ Dados carregados para ${consorcio}:`, dados.length, 'linhas');
+                        return { consorcio, status: 'ok', total: dados.length };
+                    } catch (error) {
+                        console.error(`❌ Erro ao carregar dados de ${consorcio}:`, error);
+                        this.dadosPorConsorcio[consorcio] = [];
+                        return { consorcio, status: 'error', total: 0 };
+                    }
+                }));
+
+                this.ultimaCarga = resultados;
+            },
+
+            parseCSV(csv) {
+                const linhas = csv.trim().split(/\r?\n/);
+                if (linhas.length < 2) return [];
+                
+                const headers = this.parseCSVLine(linhas[0]).map(header => header.trim());
+                const dados = [];
+                
+                for (let i = 1; i < linhas.length; i++) {
+                    const valores = this.parseCSVLine(linhas[i]);
+                    const row = {};
+                    headers.forEach((header, idx) => {
+                        row[header] = valores[idx] ? valores[idx].trim() : '';
+                    });
+                    row.__colunas = valores.map(v => String(v || '').trim());
+                    dados.push(row);
+                }
+                
+                return dados;
+            },
+
+            parseCSVLine(linha) {
+                const valores = [];
+                let valorAtual = '';
+                let entreAspas = false;
+
+                for (let i = 0; i < linha.length; i++) {
+                    const char = linha[i];
+                    const proximo = linha[i + 1];
+
+                    if (char === '"') {
+                        if (entreAspas && proximo === '"') {
+                            valorAtual += '"';
+                            i++;
+                        } else {
+                            entreAspas = !entreAspas;
+                        }
+                    } else if (char === ',' && !entreAspas) {
+                        valores.push(valorAtual);
+                        valorAtual = '';
+                    } else {
+                        valorAtual += char;
+                    }
+                }
+
+                valores.push(valorAtual);
+                return valores;
+            },
+
+            criarSecoes() {
+                const template = document.getElementById('consorcio-template');
+                const app = document.getElementById('app');
+                
+                ['SIMEMP', 'NEOCONSTEC', 'PRODEC'].forEach((consorcio, index) => {
+                    const clone = template.content.cloneNode(true);
+                    const section = clone.querySelector('section');
+                    section.setAttribute('data-page', consorcio);
+                    if (index === 0) section.classList.add('active');
+                    clone.querySelector('.unidade-logo').innerText = consorcio;
+                    app.insertBefore(clone, app.querySelector('section[data-page="ranking"]'));
+                });
+            },
+
+            parsePeriodo(label) {
+                const normalizado = String(label || '')
+                    .trim()
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '');
+                const match = normalizado.match(/^([a-z]{3})\.?[-/ ]?(\d{2,4})$/);
+
+                if (!match) return null;
+
+                const mes = this.mesesAbreviados[match[1]];
+                if (!mes) return null;
+
+                let ano = parseInt(match[2], 10);
+                if (ano < 100) ano += 2000;
+
+                return { mes, ano, ordem: ano * 100 + mes };
+            },
+
+            compararPeriodos(a, b) {
+                const periodoA = this.parsePeriodo(a);
+                const periodoB = this.parsePeriodo(b);
+
+                if (periodoA && periodoB) return periodoA.ordem - periodoB.ordem;
+                if (periodoA) return -1;
+                if (periodoB) return 1;
+                return String(a).localeCompare(String(b), 'pt-BR');
+            },
+
+            inicializarMeses() {
+                const select = document.getElementById('month-select');
+                const mesesUnicos = new Set();
+                const mapaMes = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
+
+                this.consorcios.forEach(consorcio => {
+                    this.dadosPorConsorcio[consorcio].forEach(row => {
+                        if (row.DATA) {
+                            mesesUnicos.add(row.DATA);
+                        }
+                    });
+                });
+
+                select.innerHTML = '';
+                Array.from(mesesUnicos)
+                    .sort((a, b) => this.compararPeriodos(a, b))
+                    .forEach(mes => {
+                    const option = document.createElement('option');
+                    option.value = mes;
+                    option.textContent = mes;
+                    select.appendChild(option);
+                });
+
+                const agora = new Date();
+                const mesAtual = mapaMes[agora.getMonth()];
+                const anoAtual2Digitos = String(agora.getFullYear()).slice(-2);
+                const mesPadraoAutomatico = `${mesAtual}.-${anoAtual2Digitos}`;
+                const idxPadrao = Array.from(select.options).findIndex(opt => opt.value.toLowerCase() === mesPadraoAutomatico);
+
+                if (idxPadrao >= 0) {
+                    select.selectedIndex = idxPadrao;
+                } else if (select.options.length > 0) {
+                    select.selectedIndex = select.options.length - 1;
+                }
+            },
+
+            inicializarEventos() {
+                document.getElementById('month-select').addEventListener('change', () => this.atualizarDashboard());
+                document.querySelectorAll('nav a[data-route]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.mudarPagina(link.getAttribute('data-route'));
+                    });
+                });
+            },
+
+            mudarPagina(pagina) {
+                document.querySelectorAll('section[data-page]').forEach(s => s.classList.remove('active'));
+                const section = document.querySelector(`section[data-page="${pagina}"]`);
+                if (section) section.classList.add('active');
+                document.querySelectorAll('nav a[data-route]').forEach(a => a.classList.remove('active'));
+                const link = document.querySelector(`nav a[data-route="${pagina}"]`);
+                if (link) link.classList.add('active');
+            },
+
+            getDados(consorcio, mes) {
+                return this.dadosPorConsorcio[consorcio].find(row => row.DATA === mes);
+            },
+
+            normalizarTexto(texto) {
+                return String(texto || '')
+                    .trim()
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9%]/g, '');
+            },
+
+            getCampo(row, aliases) {
+                for (const alias of aliases) {
+                    if (row[alias] !== undefined && row[alias] !== '') {
+                        return row[alias];
+                    }
+                }
+
+                const normalizados = {};
+                Object.keys(row).forEach((chave) => {
+                    normalizados[this.normalizarTexto(chave)] = row[chave];
+                });
+
+                for (const alias of aliases) {
+                    const chaveNormalizada = this.normalizarTexto(alias);
+                    if (normalizados[chaveNormalizada] !== undefined && normalizados[chaveNormalizada] !== '') {
+                        return normalizados[chaveNormalizada];
+                    }
+                }
+
+                return '';
+            },
+
+            getCampoPorColuna(row, colunaUmBase) {
+                if (!row || !Array.isArray(row.__colunas)) return '';
+                const idx = colunaUmBase - 1;
+                if (idx < 0 || idx >= row.__colunas.length) return '';
+                return row.__colunas[idx] || '';
+            },
+
+            getValorCelulaN2(consorcio) {
+                const primeiraLinha = this.dadosPorConsorcio[consorcio]?.[0];
+                if (!primeiraLinha) return '';
+                return this.getCampoPorColuna(primeiraLinha, this.colunasKpi.carteira);
+            },
+
+            getCampoComFallback(row, aliases, colunaUmBase) {
+                return this.getCampo(row, aliases) || this.getCampoPorColuna(row, colunaUmBase);
+            },
+
+            formatarMoedaOuSemDados(valor) {
+                if (valor === undefined || valor === null || String(valor).trim() === '') {
+                    return 'Sem dados';
+                }
+                return Formatter.formatarMoeda(valor);
+            },
+
+            resetarConsorcio(section) {
+                section.querySelector('.kpi-carteira').innerText = 'Sem dados';
+                section.querySelector('.kpi-proposta-venda').innerText = 'Sem dados';
+                section.querySelector('.kpi-meta-custo').innerText = 'Sem dados';
+                section.querySelector('.kpi-producao').innerText = 'Sem dados';
+                section.querySelector('.kpi-faturamento').innerText = 'Sem dados';
+                section.querySelector('.kpi-saldo').innerText = 'Sem dados';
+                section.querySelector('.kpi-recebimento').innerText = 'Sem dados';
+                section.querySelector('.kpi-resultado').innerText = 'Sem dados';
+                section.querySelector('.kpi-custo-acum').innerText = 'Sem dados';
+                section.querySelector('.kpi-retorno-econ').innerText = 'Sem dados';
+                section.querySelector('.meta-valor').innerText = 'Sem dados';
+                section.querySelector('.meta-progress-bar').style.width = '0%';
+
+                section.querySelector('.val-pc').innerText = '0.00';
+                section.querySelector('.val-fc').innerText = '0.00';
+                section.querySelector('.val-rc').innerText = '0.00';
+
+                DashboardCharts.syncGaugeWithDisplayValue(section.querySelector('.gauge-pc'), section.querySelector('.val-pc'));
+                DashboardCharts.syncGaugeWithDisplayValue(section.querySelector('.gauge-fc'), section.querySelector('.val-fc'));
+                DashboardCharts.syncGaugeWithDisplayValue(section.querySelector('.gauge-rc'), section.querySelector('.val-rc'));
+            },
+
+            atualizarDashboard() {
+                const mes = document.getElementById('month-select').value;
+                if (!mes) return;
+                this.consorcios.forEach(consorcio => {
+                    this.atualizarConsorcio(consorcio, mes);
+                });
+            },
+
+            atualizarConsorcio(consorcio, mes) {
+                const section = document.querySelector(`section[data-page="${consorcio}"]`);
+                if (!section) return;
+
+                const dados = this.getDados(consorcio, mes);
+                if (!dados) {
+                    this.resetarConsorcio(section);
+                    return;
+                }
+
+                const propostaVenda = this.getCampoComFallback(dados, ['PROPOSTA VENDA'], this.colunasKpi.propostaVenda);
+                const metaCustoResultado = this.getCampoComFallback(dados, ['META CUSTO-RESULTADO'], this.colunasKpi.metaCustoResultado);
+                const producaoReal = this.getCampoComFallback(dados, ['PRODUÇÃO REAL', 'PRODUÇAO REAL', 'PRODUCAO REAL', 'PRODUÃAO REAL'], this.colunasKpi.producaoReal);
+                const faturamento = this.getCampoComFallback(dados, ['FATURAMENTO'], this.colunasKpi.faturamento);
+                const recebimento = this.getCampoComFallback(dados, ['RECEBIMENTO'], this.colunasKpi.recebimento);
+                const custoAcumulado = this.getCampoComFallback(dados, ['CUSTO ACUMULADO'], this.colunasKpi.custoAcumulado);
+                const saldoCarteira = this.getCampoComFallback(dados, ['SALDO CARTEIRA'], this.colunasKpi.saldoCarteira);
+                const resultadoEconomico = this.getCampoComFallback(dados, ['RESULTADO ECONÔMICO', 'RESULTADO ECONOMICO', 'RESULTADO ECONÃMICO'], this.colunasKpi.resultadoEconomico);
+                const retornoEconomico = this.getCampoComFallback(dados, ['RETORNO ECONÔMICO', 'RETORNO ECONOMICO', 'RETORNO ECONÃMICO'], this.colunasKpi.retornoEconomico);
+                const carteiraMesSelecionado = this.getCampoPorColuna(dados, this.colunasKpi.carteira);
+                const carteira = carteiraMesSelecionado !== '' ? carteiraMesSelecionado : this.getValorCelulaN2(consorcio);
+                const metaRetorno = this.getCampoComFallback(dados, [`% META DE RETORNO ${consorcio}`, '% META DE RETORNO'], this.colunasKpi.metaRetorno);
+
+                section.querySelector('.kpi-carteira').innerText = this.formatarMoedaOuSemDados(carteira);
+                section.querySelector('.kpi-proposta-venda').innerText = Formatter.formatarMoeda(propostaVenda);
+                section.querySelector('.kpi-meta-custo').innerText = Formatter.formatarMoeda(metaCustoResultado);
+                section.querySelector('.kpi-producao').innerText = Formatter.formatarMoeda(producaoReal);
+                section.querySelector('.kpi-faturamento').innerText = Formatter.formatarMoeda(faturamento);
+                section.querySelector('.kpi-saldo').innerText = Formatter.formatarMoeda(saldoCarteira);
+                section.querySelector('.kpi-recebimento').innerText = Formatter.formatarMoeda(recebimento);
+                section.querySelector('.kpi-resultado').innerText = this.formatarMoedaOuSemDados(resultadoEconomico);
+                section.querySelector('.kpi-custo-acum').innerText = Formatter.formatarMoeda(custoAcumulado);
+                if (retornoEconomico === '') {
+                    section.querySelector('.kpi-retorno-econ').innerText = 'Sem dados';
+                } else {
+                    section.querySelector('.kpi-retorno-econ').innerText = Formatter.formatarPercentual(retornoEconomico);
+                }
+
+                if (metaRetorno === '') {
+                    section.querySelector('.meta-valor').innerText = 'Sem dados';
+                    section.querySelector('.meta-progress-bar').style.width = '0%';
+                } else {
+                    const metaValue = Formatter.converterParaPercentual(metaRetorno);
+                    section.querySelector('.meta-valor').innerText = Formatter.formatarPercentual(metaRetorno);
+                    section.querySelector('.meta-progress-bar').style.width = Math.max(0, Math.min(metaValue, 100)) + '%';
+                }
+
+                const pcValue = Formatter.converterParaNumero(this.getCampoComFallback(dados, ['P/C'], this.colunasKpi.pc));
+                const fcValue = Formatter.converterParaNumero(this.getCampoComFallback(dados, ['F/C'], this.colunasKpi.fc));
+                const rcValue = Formatter.converterParaNumero(this.getCampoComFallback(dados, ['R/C'], this.colunasKpi.rc));
+
+                section.querySelector('.val-pc').innerText = DashboardCharts.formatDisplayValueWithoutRounding(pcValue, 2);
+                section.querySelector('.val-fc').innerText = DashboardCharts.formatDisplayValueWithoutRounding(fcValue, 2);
+                section.querySelector('.val-rc').innerText = DashboardCharts.formatDisplayValueWithoutRounding(rcValue, 2);
+
+                DashboardCharts.syncGaugeWithDisplayValue(section.querySelector('.gauge-pc'), section.querySelector('.val-pc'));
+                DashboardCharts.syncGaugeWithDisplayValue(section.querySelector('.gauge-fc'), section.querySelector('.val-fc'));
+                DashboardCharts.syncGaugeWithDisplayValue(section.querySelector('.gauge-rc'), section.querySelector('.val-rc'));
+            },
+
+            atualizarStatus() {
+                const now = new Date();
+                const ativos = this.ultimaCarga.filter(item => item.status === 'ok').map(item => item.consorcio);
+                const pendentes = this.ultimaCarga.filter(item => item.status === 'missing').map(item => item.consorcio);
+                const falhas = this.ultimaCarga.filter(item => item.status === 'error').map(item => item.consorcio);
+
+                if (ativos.length === 0) {
+                    document.getElementById('sync-status').innerText = '❌ Erro ao sincronizar';
+                    return;
+                }
+
+                let status = `✅ ${ativos.join(', ')} sincronizado às ${now.toLocaleTimeString('pt-BR')}`;
+
+                if (pendentes.length > 0 || falhas.length > 0) {
+                    status = `⚠️ Ativo: ${ativos.join(', ')}`;
+                    if (pendentes.length > 0) status += ` | Sem URL: ${pendentes.join(', ')}`;
+                    if (falhas.length > 0) status += ` | Falha: ${falhas.join(', ')}`;
+                }
+
+                document.getElementById('sync-status').innerText = status;
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => Dashboard.init());
+
+        // Atualizar dados a cada 5 minutos
+        setInterval(async () => {
+            await Dashboard.carregarDados();
+            Dashboard.atualizarDashboard();
+            Dashboard.atualizarStatus();
+        }, 300000);
+    </script>
+</body>
+</html>
+>>>>>>> 6ddfa20 (feat: commit do arquivo index.html)
